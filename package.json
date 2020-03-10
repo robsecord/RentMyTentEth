@@ -1,0 +1,30 @@
+{
+  "name": "rent-my-tent-eth",
+  "version": "0.0.2",
+  "description": "Solidity Contracts for Rent My Tent",
+  "license": "MIT",
+  "scripts": {
+    "deploy-dev": "./deploy.sh",
+    "deploy-ropsten": "./deploy.sh -n ropsten",
+    "deploy-mainnet": "./deploy.sh -n mainnet",
+    "init-dev": "./deploy.sh -i",
+    "init-ropsten": "./deploy.sh -n ropsten -i",
+    "init-mainnet": "./deploy.sh -n mainnet -i",
+    "update-dev": "./deploy.sh -u",
+    "update-ropsten": "./deploy.sh -n ropsten -u",
+    "update-mainnet": "./deploy.sh -n mainnet -u",
+    "copy-abi": "./copy_abi.sh"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@openzeppelin/cli": "^2.6.0",
+    "@openzeppelin/contracts-ethereum-package": "^2.4.0",
+    "@openzeppelin/upgrades": "^2.6.0",
+    "@truffle/hdwallet-provider": "^1.0.32",
+    "dotenv": "^8.0.0",
+    "ganache-cli": "^6.9.0",
+    "lodash": "^4.17.15",
+    "openzeppelin-solidity": "^2.4.0",
+    "web3": "^1.2.4"
+  }
+}

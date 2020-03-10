@@ -1,0 +1,25 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {
+    "RentMyTent": "RentMyTent"
+  },
+  "dependencies": {},
+  "name": "rent-my-tent-eth",
+  "version": "0.0.2",
+  "compiler": {
+    "compilerSettings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": "200"
+      }
+    },
+    "typechain": {
+      "enabled": false
+    },
+    "manager": "openzeppelin",
+    "solcVersion": "0.5.16",
+    "artifactsDir": "build/contracts",
+    "contractsDir": "contracts"
+  },
+  "telemetryOptIn": true
+}
