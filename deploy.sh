@@ -43,12 +43,6 @@ getOwnerAccount() {
         ownerAccount="$MAINNET_OWNER_ADDRESS"
     fi
 
-    echo " "
-    echo " "
-    echo "OWNER: ${ownerAccount}"
-    echo " "
-    echo " "
-
     oz session --no-interactive --from "$ownerAccount" -n "$networkName"
 #    oz balance --from "$ownerAccount" -n "$networkName" --no-interactive
 }
