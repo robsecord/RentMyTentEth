@@ -57,6 +57,23 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     //      Tent ID => Current Listing Price
     mapping(uint256 => uint256) internal tentListingPrice;
 
+    //      Tent ID => Current Address for Reservation
+    mapping(uint256 => address) internal tentReservationAddress;
+
+    //      Tent ID => Current Deposit for Reservation
+    mapping(uint256 => uint256) internal tentReservationDeposit;
+
+    //      Tent ID => Current Custodian of Tent
+    mapping(uint256 => address) internal tentCustodian;
+
+    //      Tent ID => Current Deposit
+    mapping(uint256 => uint256) internal tentDeposit;
+
+    //      Tent ID => Current Tent Rental Period
+    mapping(uint256 => uint256) internal tentLockedRentalPeriod;
+
+    uint256 deteriorationProfits;
+
     // Contract Version
     bytes16 public version;
 
@@ -64,6 +81,9 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     // Events
     //
     event NewTent(uint256 indexed _tokenId, uint256 _listingPrice, string _uri);
+    event TentReservationStarted(uint256 indexed _tokenId, address indexed _reservationAddress, uint256 _reservationDeposit);
+    event TentReservationCancelled(uint256 indexed _tokenId);
+    event TentReservationCompleted(uint256 indexed _tokenId, address indexed _newCustodian);
 
 
     /***********************************|
@@ -107,7 +127,7 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     }
 
 
-    function listNewTent(uint256 _initialListingPrice, string memory _uri) public {
+    function listNewTent(uint256 _initialListingPrice, string memory _uri) public returns (uint256) {
         // Mint new Token
         uint256 _tokenId = totalSupply().add(1);
         _safeMint(msg.sender, _tokenId);
@@ -117,33 +137,113 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
 
         // Set Listing Price
         tentListingPrice[_tokenId] = _initialListingPrice;
+
+        // Set Current Custodian
+        tentCustodian[_tokenId] = msg.sender;
+
+        return _tokenId;
     }
 
 
+    function reserveTent(uint256 _tokenId) public nonReentrant {
+        require(_exists(_tokenId), "Invalid TokenID for Tent");
+        require(tentReservationAddress[_tokenId] == address(0x0), "Tent is already reserved");
+        require(tentCustodian[_tokenId] != msg.sender, "You are already in custody of this Tent");
+        require(now > tentLockedRentalPeriod[_tokenId], "Tent is currently being Rented");
 
-//    function placeDepositForTent() public {
-//        // renter pays deposit
-//        // tent is reserved
-//        // deposit held in escrow
-//    }
-//
-//    function completeTentTransfer(uint256 _confirmedTentQuality) public {
-//        // renter pays rental price
-//        // refund deposit to token owner
-//        //
-//        // token transfer
-//    }
+        // Get Deposit Price for Reservation
+        (, uint256 _deposit) = _getRentalPrice(_tokenId);
+        require(msg.value >= _deposit, "Insufficient funds for deposit");
 
+        // Track Reservation Address + Deposit
+        tentReservationDeposit[_tokenId] = _deposit;
+        tentReservationAddress[_tokenId] = msg.sender;
 
+        // Log Event
+        emit TentReservationStarted(_tokenId, msg.sender, _deposit);
 
-    function rentTent(uint256 _tokenId, uint256 _rentalPeriod) public payable {
-        (uint256 listingPrice, uint256 deposit) = _getRentalPrice(_tokenId);
-        require(msg.value >= listingPrice.add(deposit), "Insufficient funds for rental");
-
-        // listingPrice goes to previous owner of _tokenId
-
-        // deposit goes to escrow, gains interest
+        // Refund over-payment
+        uint256 _overage = msg.value.sub(_deposit);
+        if (_overage > 0) {
+            msg.sender.sendValue(_overage);
+        }
     }
+
+
+    function cancelReservation(uint256 _tokenId) public {
+        require(_exists(_tokenId), "Invalid TokenID for Tent");
+        require(tentReservationAddress[_tokenId] == msg.sender, "You have not reserved this Tent");
+
+        // Track Reservation Address + Deposit
+        uint256 _refund = tentReservationDeposit[_tokenId];
+        address payable _address = tentReservationAddress[_tokenId].toPayable();
+
+        // Clear Reservation
+        tentReservationDeposit[_tokenId] = 0;
+        tentReservationAddress[_tokenId] = address(0x0);
+
+        // Log Event
+        emit TentReservationCancelled(_tokenId);
+
+        // Refund Deposit to Reservation Address
+        if (_refund > 0) {
+            _address.sendValue(_refund);
+        }
+    }
+
+
+    // Called by same address that reserves the tent
+    function completeTentTransfer(uint256 _tokenId, string memory _uri, uint256 _confirmedTentQuality, uint256 _rentalPeriodInDays) public nonReentrant {
+        require(_exists(_tokenId), "Invalid TokenID for Tent");
+        require(tentReservationAddress[_tokenId] == msg.sender, "You have not reserved this Tent");
+        require(now > tentLockedRentalPeriod[_tokenId], "Tent is currently being Rented");
+        require(_confirmedTentQuality > 0, "Tent Quality must be greater than Zero");
+        require(_confirmedTentQuality <= 100, "Tent Quality must be less than or equal to 100");
+
+        // Determine New Price based on Tent Quality
+        address payable _oldCustodian = tentCustodian[_tokenId].toPayable();
+        uint256 _oldPrice = tentListingPrice[_tokenId];
+        uint256 _oldDeposit = tentDeposit[_tokenId];
+        uint256 _newPrice = (_oldPrice * _confirmedTentQuality) / 100;
+        uint256 _newDeposit = (_newPrice * depositPercentage) / 100;
+        require(msg.value >= _newPrice, "Insufficient funds for Rental");
+
+        // Track Profits from Tent Deterioration
+        uint256 _depositDiff = _oldDeposit.sub(_newDeposit);
+        deteriorationProfits = deteriorationProfits.add(_depositDiff);
+
+        // Set New Listing Price based on Tent Quality
+        tentListingPrice[_tokenId] = _newPrice;
+
+        // Track New Tent Custodian
+        tentCustodian[_tokenId] = msg.sender;
+        tentDeposit[_tokenId] = _newDeposit;
+
+        // Clear Reservation
+        uint256 _reserveDeposit = tentReservationDeposit[_tokenId];
+        tentReservationDeposit[_tokenId] = 0;
+        tentReservationAddress[_tokenId] = address(0x0);
+
+        // Lock Tent for Rental-Period
+        tentLockedRentalPeriod[_tokenId] = now + (_rentalPeriodInDays * 1 days);
+
+        // Log Event
+        emit TentReservationCompleted(_tokenId, msg.sender);
+
+        // Previous Custodian receives New Deposit + New Tent Price (based on Quality of Tent)
+        uint256 _oldCustodianRefund = _newPrice.add(_newDeposit);
+        if (_oldCustodianRefund > 0) {
+            _oldCustodian.sendValue(_oldCustodianRefund);
+        }
+
+        // New Custodian Pays New Price, gets Refund for difference between old/new Deposit value
+        uint256 _excessDeposit = _reserveDeposit.sub(_newDeposit);
+        uint256 _overage = msg.value.sub(_newPrice).add(_excessDeposit);
+        if (_overage > 0) {
+            msg.sender.sendValue(_overage);
+        }
+    }
+
 
 
     /***********************************|
@@ -152,6 +252,14 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
 
     function setDepositPercentage(uint256 _percent) public onlyOwner {
         depositPercentage = _percent;
+    }
+
+    function withdrawProfits() public onlyOwner {
+        require(deteriorationProfits > 0, "No profits available");
+
+        uint256 _profits = deteriorationProfits;
+        deteriorationProfits = 0;
+        msg.sender.sendValue(_profits);
     }
 
 
