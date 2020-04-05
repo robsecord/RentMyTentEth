@@ -3,19 +3,18 @@
 # Parse env vars from .env file
 export $(egrep -v '^#' .env | xargs)
 
-# Change this to the correct address after deploying
-addrRentMyTent="0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B"
+membershipFee="10000000000000000"   # 0.01 ETH
+transferFee="1000000000000000"      # 0.001 ETH
 
+addressRentMyTent=
 ownerAccount=
 networkName="development"
 silent=
-init=
 update=
 
 usage() {
     echo "usage: ./deploy.sh [[-n [development|ropsten|mainnet] [-i] [-u] [-v] [-s]] | [-h]]"
     echo "  -n    | --network [development|ropsten|mainnet]  Deploys contracts to the specified network (default is local)"
-    echo "  -i    | --init                                   Initialize contracts after deployment"
     echo "  -u    | --update                                 Push updates to deployments"
     echo "  -s    | --silent                                 Suppresses the Beep at the end of the script"
     echo "  -h    | --help                                   Displays this help screen"
@@ -73,18 +72,21 @@ deployFresh() {
     echoHeader
     echo "Contract Deployment Complete!"
     echo " "
-    echoBeep
-}
-
-initialize() {
-    getOwnerAccount
 
     echoHeader
     echo "Initializing RentMyTent.."
 
-#    echo " "
-#    echo "setDepositFee: $depositFee"
-#    result=$(oz send-tx --no-interactive --to ${addrRentMyTent} --method 'setDepositFee' --args ${depositFee})
+    echo " "
+    echo "registerInitialMember: $ownerAccount"
+    result=$(oz send-tx --no-interactive --to ${addressRentMyTent} --method 'registerInitialMember' --args ${ownerAccount})
+
+    echo " "
+    echo "setMembershipFee: $membershipFee"
+    result=$(oz send-tx --no-interactive --to ${addressRentMyTent} --method 'setMembershipFee' --args ${membershipFee})
+
+    echo " "
+    echo "setTransferFee: $transferFee"
+    result=$(oz send-tx --no-interactive --to ${addressRentMyTent} --method 'setTransferFee' --args ${transferFee})
 
     echoHeader
     echo "Contract Initialization Complete!"
@@ -112,8 +114,6 @@ while [[ "$1" != "" ]]; do
         -n | --network )        shift
                                 networkName=$1
                                 ;;
-        -i | --init )           init="yes"
-                                ;;
         -u | --update )         update="yes"
                                 ;;
         -s | --silent )         silent="yes"
@@ -127,9 +127,7 @@ while [[ "$1" != "" ]]; do
     shift
 done
 
-if [[ -n "$init" ]]; then
-    initialize
-elif [[ -n "$update" ]]; then
+if [[ -n "$update" ]]; then
     deployUpdate
 else
     deployFresh

@@ -45,9 +45,6 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     |        Variables and Events       |
     |__________________________________*/
 
-    // Required Deposit for Tent == Listing Price * depositPercentage / 100
-    uint256 internal depositPercentage;
-
     // Array with all available tents, used for enumeration
     uint256[] internal availableTents;
 
@@ -72,6 +69,21 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     //      Tent ID => Current Tent Rental Period
     mapping(uint256 => uint256) internal tentLockedRentalPeriod;
 
+    //      Tent ID => Positional-index in the availableTents array
+    mapping(address => bool) internal memberships;
+
+    // Required Deposit for Tent == Listing Price * depositPercentage / 100
+    uint256 internal depositPercentage;
+
+    // Fee for Membership - Allows Listing Tents
+    uint256 internal membershipFee;
+
+    // Service Fee for each Tent-Transfer
+    uint256 internal transferFee;
+
+    // Profit Tracking
+    uint256 membershipProfits;
+    uint256 transferProfits;
     uint256 deteriorationProfits;
 
     // Contract Version
@@ -100,7 +112,7 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         ERC721Pausable.initialize(sender);
 
         depositPercentage = 100;
-        version = "v0.0.2";
+        version = "v0.0.3";
     }
 
     /***********************************|
@@ -115,19 +127,98 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         return availableTents.length;
     }
 
+    function isAvailableForRent(uint256 _tokenId) public view returns (bool) {
+        if (!_exists(_tokenId)) { return false; }
+        if (tentReservationAddress[_tokenId] != address(0x0) && tentReservationAddress[_tokenId] != msg.sender) { return false; }
+        if (tentCustodian[_tokenId] == msg.sender) { return false; }
+        if (now <= tentLockedRentalPeriod[_tokenId]) { return false; }
+        return true;
+    }
+
+    function isReservedForRent(uint256 _tokenId) public view returns (bool) {
+        if (!_exists(_tokenId)) { return false; }
+        return (tentReservationAddress[_tokenId] == address(0x0));
+    }
+
+    function getTransferFee() public view returns (uint256) {
+        return transferFee;
+    }
+
+    function getMembershipFee() public view returns (uint256) {
+        return membershipFee;
+    }
+
+    function getDepositPercentage() public view returns (uint256) {
+        return depositPercentage;
+    }
+
+    function getTentDepositPrice(uint256 _tokenId) public view returns (uint256) {
+        (, uint256 _deposit) = _getRentalPrice(_tokenId);
+        return _deposit;
+    }
+
+    function getTentRentalPrice(uint256 _tokenId) public view returns (uint256) {
+        (uint256 _price, ) = _getRentalPrice(_tokenId);
+        return _price;
+    }
+
+    function getEstimatedRentalPrice(uint256 _tokenId, uint256 _tentQuality) public view returns (uint256) {
+        (uint256 _price, ) = _getRentalPrice(_tokenId);
+        uint256 _newPrice = _price.mul(_tentQuality).div(100);
+        return _newPrice.add(transferFee);
+    }
+
     /**
      * @dev Gets the tent ID at a given index of all the available tents
      * Reverts if the index is greater or equal to the total number of available tents.
-     * @param index uint256 representing the index to be accessed of the available tents list
+     * @param _index uint256 representing the index to be accessed of the available tents list
      * @return uint256 tent ID at the given index of the available tents list
      */
-    function availableTentByIndex(uint256 index) public view returns (uint256) {
-        require(index < totalAvailable(), "tent index out of bounds");
-        return availableTents[index];
+    function availableTentByIndex(uint256 _index) public view returns (uint256) {
+        require(_index < totalAvailable(), "tent index out of bounds");
+        return availableTents[_index];
     }
 
+    function registerMember(address _member) public payable {
+        require(msg.value >= membershipFee, "Insufficient fee for membership");
 
-    function listNewTent(uint256 _initialListingPrice, string memory _uri) public returns (uint256) {
+        // Register Member
+        memberships[_member] = true;
+
+        // Track Collected Fees
+        membershipProfits = membershipProfits.add(membershipFee);
+
+        // Refund over-payment
+        uint256 _overage = msg.value.sub(membershipFee);
+        if (_overage > 0) {
+            msg.sender.sendValue(_overage);
+        }
+    }
+
+    function registerMembers(address[] memory _memberAddresses) public payable {
+        uint256 _feeTotal = membershipFee.mul(_memberAddresses.length);
+        require(msg.value >= _feeTotal, "Insufficient fees for memberships");
+
+        // Register Members
+        for (uint256 i = 0; i < _memberAddresses.length; i++) {
+            address _member = _memberAddresses[i];
+            memberships[_member] = true;
+        }
+
+        // Track Collected Fees
+        membershipProfits = membershipProfits.add(_feeTotal);
+
+        // Refund over-payment
+        uint256 _overage = msg.value.sub(_feeTotal);
+        if (_overage > 0) {
+            msg.sender.sendValue(_overage);
+        }
+    }
+
+    function listNewTent(uint256 _initialListingPrice, string memory _uri) public payable nonReentrant returns (uint256) {
+        require(memberships[msg.sender], "Must be a Registered Member to List Tents");
+        require(_initialListingPrice > 0, "Must provide a valid Initial Price");
+
         // Mint new Token
         uint256 _tokenId = totalSupply().add(1);
         _safeMint(msg.sender, _tokenId);
@@ -145,7 +236,7 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     }
 
 
-    function reserveTent(uint256 _tokenId) public nonReentrant {
+    function reserveTent(uint256 _tokenId) public payable nonReentrant {
         require(_exists(_tokenId), "Invalid TokenID for Tent");
         require(tentReservationAddress[_tokenId] == address(0x0), "Tent is already reserved");
         require(tentCustodian[_tokenId] != msg.sender, "You are already in custody of this Tent");
@@ -193,7 +284,7 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
 
 
     // Called by same address that reserves the tent
-    function completeTentTransfer(uint256 _tokenId, string memory _uri, uint256 _confirmedTentQuality, uint256 _rentalPeriodInDays) public nonReentrant {
+    function completeTentTransfer(uint256 _tokenId, string memory _uri, uint256 _confirmedTentQuality, uint256 _rentalPeriodInDays) public payable nonReentrant {
         require(_exists(_tokenId), "Invalid TokenID for Tent");
         require(tentReservationAddress[_tokenId] == msg.sender, "You have not reserved this Tent");
         require(now > tentLockedRentalPeriod[_tokenId], "Tent is currently being Rented");
@@ -204,9 +295,12 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         address payable _oldCustodian = tentCustodian[_tokenId].toPayable();
         uint256 _oldPrice = tentListingPrice[_tokenId];
         uint256 _oldDeposit = tentDeposit[_tokenId];
-        uint256 _newPrice = (_oldPrice * _confirmedTentQuality) / 100;
-        uint256 _newDeposit = (_newPrice * depositPercentage) / 100;
-        require(msg.value >= _newPrice, "Insufficient funds for Rental");
+        uint256 _newPrice = _oldPrice.mul(_confirmedTentQuality).div(100);
+        uint256 _newDeposit = _newPrice.mul(depositPercentage).div(100);
+        require(msg.value >= _newPrice.add(transferFee), "Insufficient funds for Rental");
+
+        // Track Profits from Service Fees
+        transferProfits = transferProfits.add(transferFee);
 
         // Track Profits from Tent Deterioration
         uint256 _depositDiff = _oldDeposit.sub(_newDeposit);
@@ -226,6 +320,9 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
 
         // Lock Tent for Rental-Period
         tentLockedRentalPeriod[_tokenId] = now + (_rentalPeriodInDays * 1 days);
+
+        // Set New Token URI
+        _setTokenURI(_tokenId, _uri);
 
         // Log Event
         emit TentReservationCompleted(_tokenId, msg.sender);
@@ -254,12 +351,35 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         depositPercentage = _percent;
     }
 
-    function withdrawProfits() public onlyOwner {
-        require(deteriorationProfits > 0, "No profits available");
+    function setMembershipFee(uint256 _fee) public onlyOwner {
+        membershipFee = _fee;
+    }
 
-        uint256 _profits = deteriorationProfits;
+    function setTransferFee(uint256 _fee) public onlyOwner {
+        transferFee = _fee;
+    }
+
+    function registerInitialMember(address _member) public onlyOwner {
+        memberships[_member] = true;
+    }
+
+    function getContractProfits() public view onlyOwner returns (uint256) {
+        return membershipProfits.add(transferProfits).add(deteriorationProfits);
+    }
+
+    function withdrawProfits() public onlyOwner {
+        uint256 _profits = getContractProfits();
+        require(_profits > 0, "No profits available");
+
+        membershipProfits = 0;
+        transferProfits = 0;
         deteriorationProfits = 0;
         msg.sender.sendValue(_profits);
+    }
+
+    function getTotalDeposits() public view onlyOwner returns (uint256) {
+        uint256 _profits = getContractProfits();
+        return address(this).balance.sub(_profits);
     }
 
 
@@ -267,9 +387,9 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     |         Private Functions         |
     |__________________________________*/
 
-    function _getRentalPrice(uint256 _tokenId) internal returns (uint256, uint256) {
+    function _getRentalPrice(uint256 _tokenId) internal view returns (uint256, uint256) {
         uint256 listingPrice = tentListingPrice[_tokenId];
-        uint256 deposit = (listingPrice * depositPercentage) / 100;
+        uint256 deposit = listingPrice.mul(depositPercentage).div(100);
         return (listingPrice, deposit);
     }
 
