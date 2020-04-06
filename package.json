@@ -1,6 +1,6 @@
 {
   "name": "rent-my-tent-eth",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "Solidity Contracts for Rent My Tent",
   "license": "MIT",
   "scripts": {

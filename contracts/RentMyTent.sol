@@ -114,7 +114,7 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         ERC721Pausable.initialize(sender);
 
         depositPercentage = 100;
-        version = "v0.0.5";
+        version = "v0.0.7";
     }
 
     /***********************************|

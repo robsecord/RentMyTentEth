@@ -1,11 +1,11 @@
 {
   "contracts": {
     "RentMyTent": {
-      "address": "0x106928eA797415026Fee756E3d1c80a092D45859",
+      "address": "0x0524f09db37C671a8Fdf02674dF3aeBF7ccB52CB",
       "constructorCode": "6080604052614fcc806100136000396000f3fe",
-      "bodyBytecodeHash": "0f5d99fc84c0819387ddb81b19ffab1e993bcae47ae65203328697759c18c78d",
-      "localBytecodeHash": "95b832a8ec547831a877bcdffeed1d8165f95b733cf9446c5fd8cfca9b142de5",
-      "deployedBytecodeHash": "95b832a8ec547831a877bcdffeed1d8165f95b733cf9446c5fd8cfca9b142de5",
+      "bodyBytecodeHash": "3bb54c0359e818b754d296189983bf57cd4b6e553765b86a329e1b82619aeb27",
+      "localBytecodeHash": "3573aa619eefadc2f246702efc741d6628760558464ffdcb761e82435fc537a7",
+      "deployedBytecodeHash": "3573aa619eefadc2f246702efc741d6628760558464ffdcb761e82435fc537a7",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -524,10 +524,10 @@
   "proxies": {
     "rent-my-tent-eth/RentMyTent": [
       {
-        "address": "0x759A6d8eB61328FAd31fe8Db1EFBAf9893d294dD",
+        "address": "0x7Bb9AE51B65bEBa3bE5cC904ce19b6e56D2BB219",
         "version": "0.0.2",
-        "implementation": "0x106928eA797415026Fee756E3d1c80a092D45859",
-        "admin": "0xA33FdFfddBc7766A55153cb349fa22Dd57e8676c",
+        "implementation": "0x0524f09db37C671a8Fdf02674dF3aeBF7ccB52CB",
+        "admin": "0x4B2a2fb1A184514C4d255D86222240111C7d8E1E",
         "kind": "Upgradeable"
       }
     ]
@@ -535,6 +535,6 @@
   "manifestVersion": "2.2",
   "version": "0.0.2",
   "proxyAdmin": {
-    "address": "0xA33FdFfddBc7766A55153cb349fa22Dd57e8676c"
+    "address": "0x4B2a2fb1A184514C4d255D86222240111C7d8E1E"
   }
 }
