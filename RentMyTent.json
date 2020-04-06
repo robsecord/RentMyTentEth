@@ -487,6 +487,27 @@
     },
     {
       "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_member",
+          "type": "address"
+        }
+      ],
+      "name": "getMemberName",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
       "inputs": [],
       "name": "getMembershipFee",
       "outputs": [
@@ -667,6 +688,27 @@
         }
       ],
       "name": "isAvailableForRent",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_member",
+          "type": "address"
+        }
+      ],
+      "name": "isMember",
       "outputs": [
         {
           "internalType": "bool",
@@ -890,6 +932,11 @@
           "internalType": "address",
           "name": "_member",
           "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
         }
       ],
       "name": "registerInitialMember",
@@ -905,6 +952,11 @@
           "internalType": "address",
           "name": "_member",
           "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
         }
       ],
       "name": "registerMember",
@@ -920,6 +972,11 @@
           "internalType": "address[]",
           "name": "_memberAddresses",
           "type": "address[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "_names",
+          "type": "string[]"
         }
       ],
       "name": "registerMembers",
@@ -1368,8 +1425,8 @@
     "3": {
       "links": {},
       "events": {},
-      "address": "0x103fa9e0F3F15DaBA7D7C469F9bBDFAd7f43B4C2",
-      "updated_at": 1586047213433
+      "address": "0x759A6d8eB61328FAd31fe8Db1EFBAf9893d294dD",
+      "updated_at": 1586118140371
     }
   }
 }

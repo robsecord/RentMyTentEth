@@ -5,12 +5,16 @@ export $(egrep -v '^#' .env | xargs)
 
 membershipFee="10000000000000000"   # 0.01 ETH
 transferFee="1000000000000000"      # 0.001 ETH
+memberName="Contract Owner"
+memberNameHex=$(xxd -pu <<< "$memberName")
+memberNameHex="0x$memberNameHex"
 
 addressRentMyTent=
 ownerAccount=
 networkName="development"
 silent=
 update=
+
 
 usage() {
     echo "usage: ./deploy.sh [[-n [development|ropsten|mainnet] [-i] [-u] [-v] [-s]] | [-h]]"
@@ -56,6 +60,9 @@ deployFresh() {
         rm -f "./.openzeppelin/$networkName.json"
     fi
 
+    echo "Bumping minor version.."
+    version update -p
+
     echo "Compiling contracts.."
     oz compile
 
@@ -66,19 +73,10 @@ deployFresh() {
     sleep 1s
 
     echoHeader
-    echo "Contract Addresses: "
-    echo " - RentMyTent: $addressRentMyTent"
-
-    echoHeader
     echo "Contract Deployment Complete!"
-    echo " "
 
     echoHeader
     echo "Initializing RentMyTent.."
-
-    echo " "
-    echo "registerInitialMember: $ownerAccount"
-    result=$(oz send-tx --no-interactive --to ${addressRentMyTent} --method 'registerInitialMember' --args ${ownerAccount})
 
     echo " "
     echo "setMembershipFee: $membershipFee"
@@ -88,8 +86,16 @@ deployFresh() {
     echo "setTransferFee: $transferFee"
     result=$(oz send-tx --no-interactive --to ${addressRentMyTent} --method 'setTransferFee' --args ${transferFee})
 
+    echo " "
+    echo "registerInitialMember: $ownerAccount,$memberNameHex"
+    result=$(oz send-tx --no-interactive --to ${addressRentMyTent} --method 'registerInitialMember' --args ${ownerAccount},${memberNameHex})
+
     echoHeader
     echo "Contract Initialization Complete!"
+
+    echoHeader
+    echo "Contract Addresses: "
+    echo " - RentMyTent: $addressRentMyTent"
     echo " "
     echoBeep
 }

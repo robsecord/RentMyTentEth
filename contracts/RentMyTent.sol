@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 pragma solidity ^0.5.16;
+pragma experimental ABIEncoderV2;
 
 import "../node_modules/@openzeppelin/contracts-ethereum-package/contracts/utils/Address.sol";
 import "../node_modules/@openzeppelin/contracts-ethereum-package/contracts/math/SafeMath.sol";
@@ -69,8 +70,9 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     //      Tent ID => Current Tent Rental Period
     mapping(uint256 => uint256) internal tentLockedRentalPeriod;
 
-    //      Tent ID => Positional-index in the availableTents array
+    // Member Address => Active Status/Name
     mapping(address => bool) internal memberships;
+    mapping(address => string) internal memberNames;
 
     // Required Deposit for Tent == Listing Price * depositPercentage / 100
     uint256 internal depositPercentage;
@@ -112,7 +114,7 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         ERC721Pausable.initialize(sender);
 
         depositPercentage = 100;
-        version = "v0.0.3";
+        version = "v0.0.5";
     }
 
     /***********************************|
@@ -133,6 +135,14 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         if (tentCustodian[_tokenId] == msg.sender) { return false; }
         if (now <= tentLockedRentalPeriod[_tokenId]) { return false; }
         return true;
+    }
+
+    function isMember(address _member) public view returns (bool) {
+        return memberships[_member];
+    }
+
+    function getMemberName(address _member) public view returns (string memory) {
+        return memberNames[_member];
     }
 
     function isReservedForRent(uint256 _tokenId) public view returns (bool) {
@@ -179,11 +189,12 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         return availableTents[_index];
     }
 
-    function registerMember(address _member) public payable {
+    function registerMember(address _member, string memory _name) public payable {
         require(msg.value >= membershipFee, "Insufficient fee for membership");
 
         // Register Member
         memberships[_member] = true;
+        memberNames[_member] = _name;
 
         // Track Collected Fees
         membershipProfits = membershipProfits.add(membershipFee);
@@ -195,14 +206,16 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         }
     }
 
-    function registerMembers(address[] memory _memberAddresses) public payable {
+    function registerMembers(address[] memory _memberAddresses, string[] memory _names) public payable {
         uint256 _feeTotal = membershipFee.mul(_memberAddresses.length);
         require(msg.value >= _feeTotal, "Insufficient fees for memberships");
+        require(_memberAddresses.length == _names.length, "Array lengths must match");
 
         // Register Members
         for (uint256 i = 0; i < _memberAddresses.length; i++) {
             address _member = _memberAddresses[i];
             memberships[_member] = true;
+            memberNames[_member] = _names[i];
         }
 
         // Track Collected Fees
@@ -359,8 +372,9 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         transferFee = _fee;
     }
 
-    function registerInitialMember(address _member) public onlyOwner {
+    function registerInitialMember(address _member, string memory _name) public onlyOwner {
         memberships[_member] = true;
+        memberNames[_member] = _name;
     }
 
     function getContractProfits() public view onlyOwner returns (uint256) {
