@@ -1,11 +1,11 @@
 {
   "contracts": {
     "RentMyTent": {
-      "address": "0xeaF4965E423c7c754Bf381F32D53D0ac9F939297",
-      "constructorCode": "6080604052614fcc806100136000396000f3fe",
-      "bodyBytecodeHash": "479af05d67f587ba738115dbcd3cbbe1d8d93a1c05a4c3ec4f83b460db586e4d",
-      "localBytecodeHash": "01038e1f4e66d593d51f766a0fdbb12c1b6241b05f2f57bc458f0b05ae42586e",
-      "deployedBytecodeHash": "01038e1f4e66d593d51f766a0fdbb12c1b6241b05f2f57bc458f0b05ae42586e",
+      "address": "0xF982c12599b5856CCE261A8e8adAb0a018dbD87f",
+      "constructorCode": "6080604052614fa9806100136000396000f3fe",
+      "bodyBytecodeHash": "5143c659375984ba1f7e5542a1277a920efc59de8606d966a8e230019d809932",
+      "localBytecodeHash": "9eb303439fcc8acc71e969caa4a3eaa451c3ee9a9fbf2c682ca428881d884304",
+      "deployedBytecodeHash": "9eb303439fcc8acc71e969caa4a3eaa451c3ee9a9fbf2c682ca428881d884304",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -48,7 +48,7 @@
           "members": [
             {
               "label": "_value",
-              "astId": 1668,
+              "astId": 1666,
               "type": "t_uint256",
               "src": "1024:14:6"
             }
@@ -97,7 +97,7 @@
           "members": [
             {
               "label": "bearer",
-              "astId": 1339,
+              "astId": 1337,
               "type": "t_mapping<t_bool>",
               "src": "150:32:3"
             }
@@ -138,7 +138,7 @@
           "contract": "Ownable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/ownership/Ownable.sol",
           "label": "_owner",
-          "astId": 2082,
+          "astId": 2080,
           "type": "t_address",
           "src": "526:22:11"
         },
@@ -146,7 +146,7 @@
           "contract": "Ownable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/ownership/Ownable.sol",
           "label": "______gap",
-          "astId": 2195,
+          "astId": 2193,
           "type": "t_array:50<t_uint256>",
           "src": "2471:29:11"
         },
@@ -154,7 +154,7 @@
           "contract": "ReentrancyGuard",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol",
           "label": "_guardCounter",
-          "astId": 3948,
+          "astId": 3946,
           "type": "t_uint256",
           "src": "733:29:25"
         },
@@ -162,7 +162,7 @@
           "contract": "ReentrancyGuard",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol",
           "label": "______gap",
-          "astId": 3981,
+          "astId": 3979,
           "type": "t_array:50<t_uint256>",
           "src": "1563:29:25"
         },
@@ -170,7 +170,7 @@
           "contract": "ERC165",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/introspection/ERC165.sol",
           "label": "_supportedInterfaces",
-          "astId": 1724,
+          "astId": 1722,
           "type": "t_mapping<t_bool>",
           "src": "565:52:7"
         },
@@ -178,7 +178,7 @@
           "contract": "ERC165",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/introspection/ERC165.sol",
           "label": "______gap",
-          "astId": 1769,
+          "astId": 1767,
           "type": "t_array:50<t_uint256>",
           "src": "1729:29:7"
         },
@@ -186,7 +186,7 @@
           "contract": "ERC721",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721.sol",
           "label": "_tokenOwner",
-          "astId": 2299,
+          "astId": 2297,
           "type": "t_mapping<t_address>",
           "src": "886:48:13"
         },
@@ -194,7 +194,7 @@
           "contract": "ERC721",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721.sol",
           "label": "_tokenApprovals",
-          "astId": 2303,
+          "astId": 2301,
           "type": "t_mapping<t_address>",
           "src": "990:52:13"
         },
@@ -202,7 +202,7 @@
           "contract": "ERC721",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721.sol",
           "label": "_ownedTokensCount",
-          "astId": 2307,
+          "astId": 2305,
           "type": "t_mapping<t_struct<Counters.Counter>>",
           "src": "1100:63:13"
         },
@@ -210,7 +210,7 @@
           "contract": "ERC721",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721.sol",
           "label": "_operatorApprovals",
-          "astId": 2313,
+          "astId": 2311,
           "type": "t_mapping<t_bool>",
           "src": "1218:73:13"
         },
@@ -218,7 +218,7 @@
           "contract": "ERC721",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721.sol",
           "label": "______gap",
-          "astId": 2925,
+          "astId": 2923,
           "type": "t_array:50<t_uint256>",
           "src": "15262:29:13"
         },
@@ -226,7 +226,7 @@
           "contract": "ERC721Enumerable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Enumerable.sol",
           "label": "_ownedTokens",
-          "astId": 2983,
+          "astId": 2981,
           "type": "t_mapping<t_array:dyn<t_uint256>>",
           "src": "502:50:15"
         },
@@ -234,7 +234,7 @@
           "contract": "ERC721Enumerable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Enumerable.sol",
           "label": "_ownedTokensIndex",
-          "astId": 2987,
+          "astId": 2985,
           "type": "t_mapping<t_uint256>",
           "src": "622:53:15"
         },
@@ -242,7 +242,7 @@
           "contract": "ERC721Enumerable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Enumerable.sol",
           "label": "_allTokens",
-          "astId": 2990,
+          "astId": 2988,
           "type": "t_array:dyn<t_uint256>",
           "src": "736:28:15"
         },
@@ -250,7 +250,7 @@
           "contract": "ERC721Enumerable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Enumerable.sol",
           "label": "_allTokensIndex",
-          "astId": 2994,
+          "astId": 2992,
           "type": "t_mapping<t_uint256>",
           "src": "835:51:15"
         },
@@ -258,7 +258,7 @@
           "contract": "ERC721Enumerable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Enumerable.sol",
           "label": "______gap",
-          "astId": 3325,
+          "astId": 3323,
           "type": "t_array:50<t_uint256>",
           "src": "9053:29:15"
         },
@@ -266,7 +266,7 @@
           "contract": "ERC721Metadata",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Metadata.sol",
           "label": "_name",
-          "astId": 3364,
+          "astId": 3362,
           "type": "t_string",
           "src": "323:20:17"
         },
@@ -274,7 +274,7 @@
           "contract": "ERC721Metadata",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Metadata.sol",
           "label": "_symbol",
-          "astId": 3366,
+          "astId": 3364,
           "type": "t_string",
           "src": "370:22:17"
         },
@@ -282,7 +282,7 @@
           "contract": "ERC721Metadata",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Metadata.sol",
           "label": "_tokenURIs",
-          "astId": 3370,
+          "astId": 3368,
           "type": "t_mapping<t_string>",
           "src": "438:45:17"
         },
@@ -290,7 +290,7 @@
           "contract": "ERC721Metadata",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Metadata.sol",
           "label": "______gap",
-          "astId": 3501,
+          "astId": 3499,
           "type": "t_array:50<t_uint256>",
           "src": "3086:29:17"
         },
@@ -298,7 +298,7 @@
           "contract": "ERC721Full",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Full.sol",
           "label": "______gap",
-          "astId": 3344,
+          "astId": 3342,
           "type": "t_array:50<t_uint256>",
           "src": "532:29:16"
         },
@@ -306,7 +306,7 @@
           "contract": "MinterRole",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/access/roles/MinterRole.sol",
           "label": "_minters",
-          "astId": 1436,
+          "astId": 1434,
           "type": "t_struct<Roles.Role>",
           "src": "327:27:4"
         },
@@ -314,7 +314,7 @@
           "contract": "MinterRole",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/access/roles/MinterRole.sol",
           "label": "______gap",
-          "astId": 1536,
+          "astId": 1534,
           "type": "t_array:50<t_uint256>",
           "src": "1193:29:4"
         },
@@ -322,7 +322,7 @@
           "contract": "ERC721Mintable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Mintable.sol",
           "label": "______gap",
-          "astId": 3597,
+          "astId": 3595,
           "type": "t_array:50<t_uint256>",
           "src": "1687:29:18"
         },
@@ -330,7 +330,7 @@
           "contract": "ERC721Burnable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Burnable.sol",
           "label": "______gap",
-          "astId": 2960,
+          "astId": 2958,
           "type": "t_array:50<t_uint256>",
           "src": "678:29:14"
         },
@@ -338,7 +338,7 @@
           "contract": "PauserRole",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/access/roles/PauserRole.sol",
           "label": "_pausers",
-          "astId": 1559,
+          "astId": 1557,
           "type": "t_struct<Roles.Role>",
           "src": "327:27:5"
         },
@@ -346,7 +346,7 @@
           "contract": "PauserRole",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/access/roles/PauserRole.sol",
           "label": "______gap",
-          "astId": 1659,
+          "astId": 1657,
           "type": "t_array:50<t_uint256>",
           "src": "1193:29:5"
         },
@@ -354,7 +354,7 @@
           "contract": "Pausable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.sol",
           "label": "_paused",
-          "astId": 1801,
+          "astId": 1799,
           "type": "t_bool",
           "src": "909:20:9"
         },
@@ -362,7 +362,7 @@
           "contract": "Pausable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/lifecycle/Pausable.sol",
           "label": "______gap",
-          "astId": 1884,
+          "astId": 1882,
           "type": "t_array:50<t_uint256>",
           "src": "2163:29:9"
         },
@@ -370,7 +370,7 @@
           "contract": "ERC721Pausable",
           "path": "node_modules/@openzeppelin/contracts-ethereum-package/contracts/token/ERC721/ERC721Pausable.sol",
           "label": "______gap",
-          "astId": 3687,
+          "astId": 3685,
           "type": "t_array:50<t_uint256>",
           "src": "869:29:19"
         },
@@ -524,10 +524,10 @@
   "proxies": {
     "rent-my-tent-eth/RentMyTent": [
       {
-        "address": "0x0f5E7545F1f708C84AeC7ef92388A054919630B1",
+        "address": "0xbcE4bb8c745d0dA70e8200553e2477b34D4b95A6",
         "version": "0.0.2",
-        "implementation": "0xeaF4965E423c7c754Bf381F32D53D0ac9F939297",
-        "admin": "0xeCa788435d1ae205Ed51032bf9D7ea828373e656",
+        "implementation": "0xF982c12599b5856CCE261A8e8adAb0a018dbD87f",
+        "admin": "0x59877Cbf894f1d277f4ea86087102784173eE138",
         "kind": "Upgradeable"
       }
     ]
@@ -535,6 +535,6 @@
   "manifestVersion": "2.2",
   "version": "0.0.2",
   "proxyAdmin": {
-    "address": "0xeCa788435d1ae205Ed51032bf9D7ea828373e656"
+    "address": "0x59877Cbf894f1d277f4ea86087102784173eE138"
   }
 }

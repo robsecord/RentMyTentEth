@@ -820,8 +820,8 @@
           "type": "uint256"
         }
       ],
-      "payable": true,
-      "stateMutability": "payable",
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -1425,8 +1425,8 @@
     "3": {
       "links": {},
       "events": {},
-      "address": "0x7Bb9AE51B65bEBa3bE5cC904ce19b6e56D2BB219",
-      "updated_at": 1586150331555
+      "address": "0xbcE4bb8c745d0dA70e8200553e2477b34D4b95A6",
+      "updated_at": 1586242298728
     }
   }
 }
