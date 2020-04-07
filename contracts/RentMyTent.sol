@@ -99,7 +99,6 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
     event TentReservationCancelled(uint256 indexed _tokenId);
     event TentReservationCompleted(uint256 indexed _tokenId, address indexed _newCustodian);
 
-
     /***********************************|
     |          Initialization           |
     |__________________________________*/
@@ -114,7 +113,7 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         ERC721Pausable.initialize(sender);
 
         depositPercentage = 100;
-        version = "v0.0.7";
+        version = "v0.0.8";
     }
 
     /***********************************|
@@ -228,7 +227,7 @@ contract RentMyTent is Initializable, Ownable, ReentrancyGuard, ERC721Full, ERC7
         }
     }
 
-    function listNewTent(uint256 _initialListingPrice, string memory _uri) public payable nonReentrant returns (uint256) {
+    function listNewTent(uint256 _initialListingPrice, string memory _uri) public returns (uint256) {
         require(memberships[msg.sender], "Must be a Registered Member to List Tents");
         require(_initialListingPrice > 0, "Must provide a valid Initial Price");
 

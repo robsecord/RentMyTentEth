@@ -1,4 +1,4 @@
-## Rent My Tent - Solidity Contracts v0.0.7
+## Rent My Tent - Solidity Contracts v0.0.8
 
 ### Frameworks/Software used:
 - OpenZeppelin CLI **v2.6.0**
