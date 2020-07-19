@@ -23,7 +23,7 @@
     "@truffle/hdwallet-provider": "^1.0.32",
     "dotenv": "^8.0.0",
     "ganache-cli": "^6.9.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "openzeppelin-solidity": "^2.4.0",
     "web3": "^1.2.4"
   }
